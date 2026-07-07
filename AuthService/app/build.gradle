@@ -1,0 +1,84 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.springframework.boot' version '3.4.1'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.subham'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('springCloudVersion', "2024.0.0")
+    set('jjwtVersion', "0.12.6")
+    set('modelMapperVersion', "3.2.1")
+    set('mysqlConnectorVersion', "9.1.0")
+    set('lombokVersion', "1.18.36")
+}
+
+dependencies {
+    // Web
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.4.1'
+
+    // Actuator (health checks, metrics)
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.4.1'
+
+    // Spring Cloud bootstrap support
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:4.2.0'
+
+    // JPA / persistence
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.4.1'
+
+    // Security + OAuth2 resource server
+    implementation 'org.springframework.boot:spring-boot-starter-security:3.4.1'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.4.1'
+
+    // DTO <-> Entity mapping
+    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+
+    //kafka
+    implementation("org.springframework.kafka:spring-kafka")
+
+    // MySQL driver
+    runtimeOnly "com.mysql:mysql-connector-j:${mysqlConnectorVersion}"
+
+    // JWT
+    implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
+
+    // Lombok
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.4.1'
+    testImplementation 'org.springframework.security:spring-security-test:6.4.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+application {
+    mainClass = 'expenseTracker.App'
+}
+
+test {
+    useJUnitPlatform()
+}
