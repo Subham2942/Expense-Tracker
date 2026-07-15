@@ -82,12 +82,61 @@ services:
       MYSQL_PASSWORD: password
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
 
+  expense-service:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile.service
+      args:
+        JAR_FILE: Jars/expenseService-0.0.1-SNAPSHOT.jar
+    container_name: expense-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DB: expense_service
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 8082"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  ds-service:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile.ds-service
+    container_name: ds-service
+    ports:
+      - "3000:3000"
+    depends_on:
+      kafka:
+        condition: service_healthy
+    env_file:
+      - ../dsService/.env
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+
   kong:
     image: kong:3.9
     container_name: kong
     depends_on:
-      - auth-service
-      - user-service
+      auth-service:
+        condition: service_started
+      user-service:
+        condition: service_started
+      expense-service:
+        condition: service_healthy
+      ds-service:
+        condition: service_started
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml

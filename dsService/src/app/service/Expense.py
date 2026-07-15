@@ -7,7 +7,7 @@ class Expense(BaseModel):
     amount: Optional[str] = Field(
         default=None,
         title="expense",
-        description="Amount spent in the transaction with currency symbol, only the amount.",
+        description="Amount spent in the transaction without any currency symbol, only the amount.",
     )
     merchant: Optional[str] = Field(
         default=None,

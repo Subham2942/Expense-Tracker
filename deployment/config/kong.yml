@@ -16,3 +16,19 @@ services:
         paths:
           - /user
         strip_path: false
+
+  - name: expense-service
+    url: http://expense-service:8082
+    routes:
+      - name: expense-routes
+        paths:
+          - /expense
+        strip_path: false
+
+  - name: ds-service
+    url: http://ds-service:3000
+    routes:
+      - name: ds-routes
+        paths:
+          - /ds
+        strip_path: false

@@ -11,6 +11,7 @@ flowchart LR
     Client --> Kong["Kong API Gateway :8000"]
     Kong --> Auth["Auth Service :9898"]
     Kong --> User["User Service :8081"]
+    Kong --> Expense["Expense Service :8082"]
     Auth --> AuthDB[(auth_service)]
     User --> UserDB[(user_service)]
     Auth --> Kafka["Kafka :9092"]
@@ -29,12 +30,12 @@ flowchart LR
 | User Service | Java 21, Spring Boot | 8081 | User-profile storage and Kafka event consumption |
 | Expense Service | Java 21, Spring Boot | 8082 | Expense creation, retrieval, update, and deletion |
 | Data Service | Python, Flask, LangChain | 3000 | Extracts structured expense details from bank messages |
-| Kong | API gateway | 8000 | Routes public Auth and User API requests |
+| Kong | API gateway | 8000 | Routes public Auth, User, Expense, and Data Service API requests |
 | MySQL | Database | 3306 | Stores authentication, user, and expense data |
 | Kafka | Event broker | 9092 | Passes events between services |
 
 > [!NOTE]
-> Docker Compose currently starts MySQL, Kafka, Auth Service, User Service, and Kong. Expense Service and Data Service are run separately during local development.
+> Docker Compose starts MySQL, Kafka, all four application services, and Kong. The services can still be run separately during local development.
 
 ## Repository layout
 
@@ -58,18 +59,21 @@ The Java services include Gradle wrappers, so a separate Gradle installation is 
 
 ## Run the containerized stack
 
-The Compose deployment expects the Auth and User JARs in the ignored `Jars/` directory. Build and copy them from the repository root:
+The Compose deployment expects the Auth, User, and Expense JARs in the ignored `Jars/` directory. Build and copy them from the repository root:
 
 ```bash
 cd AuthService
 ./gradlew clean bootJar
 cd ../UserService
 ./gradlew clean bootJar
+cd ../expenseService
+./gradlew clean bootJar
 cd ..
 
 mkdir -p Jars
 cp AuthService/build/libs/authService-0.0.1-SNAPSHOT.jar Jars/
 cp UserService/build/libs/userService-0.0.1-SNAPSHOT.jar Jars/
+cp expenseService/build/libs/expenseService-0.0.1-SNAPSHOT.jar Jars/
 ```
 
 Start the stack:
@@ -169,6 +173,11 @@ python __init__.py
 | `POST` | `/auth/v1/refreshToken` | Exchange a refresh token for an access token |
 | `POST` | `/user/v1/createUpdate` | Create or update a user profile |
 | `GET` | `/user/v1/getUser?userId=...` | Retrieve a user profile |
+| `GET` | `/expense/v1/getExpense?user_id=...` | List a user's expenses |
+| `POST` | `/expense/v1/addExpense` | Add an expense; requires the `X-User-Id` header |
+| `PUT` | `/expense/v1/updateExpens` | Update an expense |
+| `DELETE` | `/expense/v1/deleteExpense` | Delete an expense |
+| `POST` | `/ds/v1/message` | Extract expense details from a bank message |
 
 Example signup request:
 
@@ -219,4 +228,3 @@ cd ../expenseService && ./gradlew test
 - Development passwords in `deployment/docker-compose.yml` are intended only for local use.
 - Override database and Kafka settings with environment variables when running outside Docker.
 - Rotate any credential immediately if it is accidentally committed, even after the file is removed from Git.
-

@@ -1,5 +1,5 @@
 FROM amazoncorretto:21 AS build
-MAINTAINER Subham
+LABEL maintainer="Subham"
 WORKDIR /app
 COPY . .
 RUN ./gradlew clean build -x test
