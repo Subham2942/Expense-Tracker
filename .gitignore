@@ -1,2 +1,92 @@
-Server
-Jars
+# Project-local generated directories
+/Server/
+/Jars/
+
+# Operating-system metadata
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+
+# IDE and editor metadata
+.idea/
+.vscode/
+*.iws
+*.iml
+*.ipr
+*.swp
+*.swo
+*~
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.local
+
+# Java and Gradle output
+.gradle/
+build/
+bin/
+out/
+target/
+*.class
+*.jar
+*.war
+*.ear
+!**/gradle/wrapper/gradle-wrapper.jar
+
+# Eclipse, STS, and NetBeans metadata
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# Python environments, bytecode, and tool caches
+.venv/
+venv/
+env/
+dsenv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+*.egg-info/
+
+# Package and test output
+dist/
+coverage/
+.cache/
+
+# Logs, runtime files, and local databases
+*.log
+logs/
+*.pid
+*.pid.lock
+*.sqlite
+*.sqlite3
+
+# Temporary files and archives
+tmp/
+temp/
+*.tmp
+*.bak
+*.orig
+*.zip
+*.tar
+*.tar.gz

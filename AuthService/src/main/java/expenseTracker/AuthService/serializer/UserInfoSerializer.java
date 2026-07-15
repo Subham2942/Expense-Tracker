@@ -22,8 +22,7 @@ public class UserInfoSerializer implements Serializer<UserInfoEvent> {
         }
         ObjectMapper mapper = new ObjectMapper();
         try{
-            byte[] result = mapper.writeValueAsString(arg1).getBytes(StandardCharsets.UTF_8);
-            return result;
+            return mapper.writeValueAsString(arg1).getBytes(StandardCharsets.UTF_8);
         }catch(Exception e){
             e.printStackTrace();
             throw new RuntimeException("Failed to serialize Event ",e);

@@ -55,7 +55,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         String password = userInfoDto.getPassword();
 
         // validate email and password
-        if (email == null || email.isBlank() || password == null || password.isBlank()) {
+        if (email.isBlank() || password == null || password.isBlank()) {
             throw new IllegalArgumentException("Email or password cannot be empty");
         }
 
