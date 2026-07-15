@@ -20,7 +20,7 @@ import java.util.UUID;
 public class Expense {
     @Id
     @Column(name="id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name="external_id")
@@ -41,11 +41,21 @@ public class Expense {
     @Column(name = "created_at")
     private Timestamp createdAt;
 
+    @Column(name = "updated_at")
+    private Timestamp updatedAt;
+
     @PrePersist
     @PreUpdate
     private void generateExternalId() {
         if (externalId == null) {
             externalId = UUID.randomUUID().toString();
         }
+
+        if (createdAt == null) {
+            createdAt = new Timestamp(System.currentTimeMillis());
+        }
+
+        updatedAt = new Timestamp(System.currentTimeMillis());
     }
+
 }

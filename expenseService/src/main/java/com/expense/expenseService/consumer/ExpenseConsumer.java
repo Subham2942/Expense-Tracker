@@ -19,7 +19,7 @@ public class ExpenseConsumer
         this.expenseService = expenseService;
     }
 
-    @KafkaListener(topics = "${spring.kafka.topic-json.name}", groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "${spring.kafka.topic.name}", groupId = "${spring.kafka.consumer.group-id}")
     public void listen(ExpenseDto eventData) {
         try{
             // Todo: Make it transactional, and check if duplicate event (Handle idempotency)
