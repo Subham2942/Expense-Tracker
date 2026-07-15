@@ -10,15 +10,15 @@ public class UserInfoDeserializer implements Deserializer<UserInfoDto> {
     @Override
     public UserInfoDto deserialize(String arg0, byte[] arg1) {
         ObjectMapper mapper = new ObjectMapper();
-        UserInfoDto user = null;
+        if (arg1 == null || arg1.length == 0) {
+            throw new RuntimeException("Kafka message payload is empty");
+        }
         try{
             System.out.println(new String(arg1, StandardCharsets.UTF_8));
-            user = mapper.readValue(arg1, UserInfoDto.class);
+            return mapper.readValue(arg1, UserInfoDto.class);
         }catch(Exception ex){
-            System.out.println(ex.getMessage());
+            throw new RuntimeException("Failed to deserialize UserInfoDto", ex);
         }
-
-        return user;
     }
 
 }

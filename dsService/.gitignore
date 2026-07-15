@@ -1,0 +1,40 @@
+# Local environments and secrets
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+env/
+dsenv/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Packaging and build output
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Logs and runtime files
+*.log
+*.pid
+*.sqlite3
+
+# IDE and editor metadata
+.idea/
+.vscode/
+*.swp
+*~
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db

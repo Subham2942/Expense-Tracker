@@ -3,31 +3,39 @@ package com.expenseTracker.userService.Entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Entity
-@Table(name = "user_service")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserInfoDto {
 
-    @Id
-    @Column(name = "user_id")
+    @NonNull
     private String userId;
 
+    @NonNull
     private String firstName; //first_name
+
+    @NonNull
     private String lastName; //last_name
+
+    @NonNull
     private String email; //email
+
     private Long phoneNumber; //phone_number
+
     private String profilePicture;
 
+    public UserInfo convertToUserInfo(){
+        return UserInfo.builder()
+                .userId(userId)
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .profilePicture(profilePicture).build();
+    }
 }

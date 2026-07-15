@@ -1,0 +1,18 @@
+_format_version: "3.0"
+
+services:
+  - name: auth-service
+    url: http://auth-service:9898
+    routes:
+      - name: auth-routes
+        paths:
+          - /auth
+        strip_path: false
+
+  - name: user-service
+    url: http://user-service:8081
+    routes:
+      - name: user-routes
+        paths:
+          - /user
+        strip_path: false
