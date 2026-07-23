@@ -124,6 +124,8 @@ services:
       - ../dsService/.env
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      KAFKA_HOST: kafka
+      KAFKA_PORT: 29092
 
   kong:
     image: kong:3.9
