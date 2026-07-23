@@ -1,7 +1,6 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react';
 
-import { getApiUrl } from '@/services/api-config';
-import { pingSession, refreshSession } from '@/services/auth-api';
+import { pingSession, refreshSession, revokeSession } from '@/services/auth-api';
 import { AuthTokens, clearTokens, getTokens, saveTokens } from '@/services/token-storage';
 
 type AuthContextValue = {
@@ -14,21 +13,7 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 async function revokeRefreshToken(refreshToken: string | null) {
-  const apiUrl = getApiUrl();
-  if (!refreshToken || !apiUrl) return;
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 5000);
-  try {
-    await fetch(`${apiUrl}/auth/v1/logout`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: refreshToken }),
-      signal: controller.signal,
-    });
-  } finally {
-    clearTimeout(timeout);
-  }
+  if (refreshToken) await revokeSession(refreshToken);
 }
 
 export function AuthProvider({ children }: PropsWithChildren) {

@@ -39,7 +39,6 @@ function RootNavigator() {
         </Stack.Protected>
         <Stack.Protected guard={isAuthenticated}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
         </Stack.Protected>
       </Stack>
       <StatusBar style="auto" />

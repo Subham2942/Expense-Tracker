@@ -37,10 +37,6 @@ export async function saveTokens(tokens: AuthTokens) {
   ]);
 }
 
-export async function getRefreshToken() {
-  return getItem(REFRESH_TOKEN_KEY);
-}
-
 export async function getTokens(): Promise<AuthTokens | null> {
   const [accessToken, refreshToken] = await Promise.all([
     getItem(ACCESS_TOKEN_KEY),
