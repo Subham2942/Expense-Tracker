@@ -8,6 +8,7 @@ type AuthContextValue = {
   isLoading: boolean;
   login: (tokens: AuthTokens) => Promise<void>;
   logout: () => Promise<void>;
+  expireSession: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -75,6 +76,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
         clearTokens(),
         revokeRefreshToken(refreshToken),
       ]);
+    },
+    expireSession: async () => {
+      setTokens(null);
+      await Promise.allSettled([clearTokens()]);
     },
   }), [isLoading, tokens]);
 

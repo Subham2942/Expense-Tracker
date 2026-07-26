@@ -4,7 +4,6 @@ import com.expense.expenseService.dto.ExpenseDto;
 import com.expense.expenseService.service.ExpenseService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,32 +23,36 @@ public class ExpenseController
     }
 
     @GetMapping(path = "/getExpense")
-    public ResponseEntity<List<ExpenseDto>> getExpense(@RequestParam(value = "user_id") @NonNull String userId){
+    public ResponseEntity<List<ExpenseDto>> getExpense(@RequestHeader(value = "X-User-Id") @NonNull String userId){
         try{
             List<ExpenseDto> expenseDtoList = expenseService.getExpenses(userId);
-            return new ResponseEntity<>(expenseDtoList, HttpStatus.OK);
+            return ResponseEntity.ok(expenseDtoList);
         }catch(Exception ex){
-            return new ResponseEntity<>((HttpHeaders) null, HttpStatus.NOT_FOUND);
+            return ResponseEntity.internalServerError().build();
         }
     }
 
     @PostMapping(path="/addExpense")
-    public ResponseEntity<Boolean> addExpenses(@RequestHeader(value = "X-User-Id") @NonNull String userId, ExpenseDto expenseDto){
+    public ResponseEntity<Boolean> addExpenses(@RequestHeader(value = "X-User-Id") @NonNull String userId, @RequestBody @NonNull ExpenseDto expenseDto){
         try{
             expenseDto.setUserId(userId);
-            return new ResponseEntity<>(expenseService.createExpense(expenseDto), HttpStatus.OK);
+            boolean created = expenseService.createExpense(expenseDto);
+            return created ?
+                    new ResponseEntity<>(true, HttpStatus.CREATED) :
+                    ResponseEntity.badRequest().body(false);
         }catch (Exception ex){
-            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(false);
         }
     }
 
-    @PutMapping(path="/updateExpens")
-    public ResponseEntity<Boolean> updateExpense(@RequestHeader(value = "X-User-Id") @NonNull String userId, @NonNull ExpenseDto expenseDto){
+    @PutMapping(path={"/updateExpense", "/updateExpens"})
+    public ResponseEntity<Boolean> updateExpense(@RequestHeader(value = "X-User-Id") @NonNull String userId, @RequestBody @NonNull ExpenseDto expenseDto){
         try{
+            expenseDto.setUserId(userId);
             boolean success = expenseService.updateExpense(expenseDto);
-            return new ResponseEntity<>(true, success ? HttpStatus.OK :  HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(success, success ? HttpStatus.OK : HttpStatus.NOT_FOUND);
         }catch (Exception ex){
-            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(false);
         }
     }
 

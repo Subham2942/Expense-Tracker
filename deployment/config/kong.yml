@@ -11,6 +11,11 @@ services:
 
   - name: user-service
     url: http://user-service:8081
+    plugins:
+      - name: forward-auth
+        config:
+          auth_url: http://auth-service:9898/auth/v1/ping
+          timeout_ms: 2000
     routes:
       - name: user-routes
         paths:
@@ -19,6 +24,27 @@ services:
 
   - name: expense-service
     url: http://expense-service:8082
+    plugins:
+      - name: forward-auth
+        config:
+          auth_url: http://auth-service:9898/auth/v1/ping
+          timeout_ms: 2000
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          headers:
+            - Authorization
+            - Content-Type
+            - Accept
+          max_age: 3600
+          credentials: false
     routes:
       - name: expense-routes
         paths:
@@ -27,6 +53,11 @@ services:
 
   - name: ds-service
     url: http://ds-service:3000
+    plugins:
+      - name: forward-auth
+        config:
+          auth_url: http://auth-service:9898/auth/v1/ping
+          timeout_ms: 2000
     routes:
       - name: ds-routes
         paths:

@@ -28,6 +28,9 @@ public class ExpenseService
 
     public boolean createExpense(ExpenseDto expenseDto){
         setCurrency(expenseDto);
+        if (expenseDto.getAmount() == null || expenseDto.getAmount().signum() <= 0) {
+            return false;
+        }
         try{
             expenseRepository.save(objectMapper.convertValue(expenseDto, Expense.class));
             return true;
@@ -37,7 +40,9 @@ public class ExpenseService
     }
 
     public boolean updateExpense(ExpenseDto expenseDto){
-        setCurrency(expenseDto);
+        if (expenseDto.getExternalId() == null || expenseDto.getAmount() == null || expenseDto.getAmount().signum() <= 0) {
+            return false;
+        }
         Optional<Expense> expenseFoundOpt = expenseRepository.findByUserIdAndExternalId(expenseDto.getUserId(), expenseDto.getExternalId());
         if(expenseFoundOpt.isEmpty()){
             return false;
@@ -45,7 +50,7 @@ public class ExpenseService
         Expense expense = expenseFoundOpt.get();
         expense.setAmount(expenseDto.getAmount());
         expense.setMerchant(Strings.isNotBlank(expenseDto.getMerchant())?expenseDto.getMerchant():expense.getMerchant());
-        expense.setCurrency(Strings.isNotBlank(expenseDto.getCurrency())?expenseDto.getMerchant():expense.getCurrency());
+        expense.setCurrency(Strings.isNotBlank(expenseDto.getCurrency())?expenseDto.getCurrency():expense.getCurrency());
         expenseRepository.save(expense);
         return true;
     }
@@ -60,13 +65,13 @@ public class ExpenseService
     }
 
     public List<ExpenseDto> getExpenses(String userId){
-        List<Expense> expenseOpt = expenseRepository.findByUserId(userId);
+        List<Expense> expenseOpt = expenseRepository.findByUserIdOrderByCreatedAtDesc(userId);
         return objectMapper.convertValue(expenseOpt, new TypeReference<List<ExpenseDto>>() {});
     }
 
     private void setCurrency(ExpenseDto expenseDto){
-        if(Objects.isNull(expenseDto.getCurrency())){
-            expenseDto.setCurrency("inr");
+        if(Objects.isNull(expenseDto.getCurrency()) || expenseDto.getCurrency().isBlank()){
+            expenseDto.setCurrency("INR");
         }
     }
 

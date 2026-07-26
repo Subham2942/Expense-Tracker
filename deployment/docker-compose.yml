@@ -142,6 +142,7 @@ services:
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
+      KONG_PLUGINS: bundled,forward-auth
       KONG_PROXY_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_PROXY_ERROR_LOG: /dev/stderr
@@ -152,6 +153,7 @@ services:
       - "8001:8001" # admin API, local only
     volumes:
       - ./config/kong.yml:/kong/declarative/kong.yml
+      - ./kong/plugins/forward-auth:/usr/local/share/lua/5.1/kong/plugins/forward-auth:ro
 
 volumes:
   mysql_data:

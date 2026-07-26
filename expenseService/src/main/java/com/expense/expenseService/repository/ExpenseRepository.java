@@ -12,6 +12,8 @@ public interface ExpenseRepository extends CrudRepository<Expense, Long> {
 
     List<Expense> findByUserId(String userId);
 
+    List<Expense> findByUserIdOrderByCreatedAtDesc(String userId);
+
     List<Expense> findByUserIdAndCreatedAtBetween(String userId, Timestamp startTime, Timestamp endTime);
 
     Optional<Expense> findByUserIdAndExternalId(String userId, String externalId);
