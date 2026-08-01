@@ -45,7 +45,7 @@ public class ExpenseController
         }
     }
 
-    @PutMapping(path={"/updateExpense", "/updateExpens"})
+    @PutMapping(path={"/updateExpense"})
     public ResponseEntity<Boolean> updateExpense(@RequestHeader(value = "X-User-Id") @NonNull String userId, @RequestBody @NonNull ExpenseDto expenseDto){
         try{
             expenseDto.setUserId(userId);
@@ -57,11 +57,13 @@ public class ExpenseController
     }
 
     @DeleteMapping(path = "/deleteExpense")
-    public ResponseEntity<Boolean> deleteExpense(@RequestParam(value = "user_id") @NonNull String userId, @NonNull ExpenseDto expenseDto){
+    public ResponseEntity<Boolean> deleteExpense(
+            @RequestHeader(value = "X-User-Id") @NonNull String userId,
+            @RequestParam(value = "external_id") @NonNull String externalId){
         try{
-            boolean success = expenseService.deleteExpense(expenseDto);
+            boolean success = expenseService.deleteExpense(userId, externalId);
 
-            return new ResponseEntity<>(true, success ? HttpStatus.OK :  HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(success, success ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 
         }
         catch (Exception ex){

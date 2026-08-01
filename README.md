@@ -176,7 +176,7 @@ python __init__.py
 | `GET` | `/expense/v1/getExpense?user_id=...` | List a user's expenses |
 | `POST` | `/expense/v1/addExpense` | Add an expense; requires the `X-User-Id` header |
 | `PUT` | `/expense/v1/updateExpens` | Update an expense |
-| `DELETE` | `/expense/v1/deleteExpense` | Delete an expense |
+| `DELETE` | `/expense/v1/deleteExpense?external_id=...` | Delete an expense; requires the `X-User-Id` header |
 | `POST` | `/ds/v1/message` | Extract expense details from a bank message |
 
 Example signup request:
@@ -201,7 +201,7 @@ curl -X POST http://localhost:8000/auth/v1/signup \
 | `GET` | `http://localhost:8082/expense/v1/getExpense?user_id=...` | List a user's expenses |
 | `POST` | `http://localhost:8082/expense/v1/addExpense` | Add an expense; requires the `X-User-Id` header |
 | `PUT` | `http://localhost:8082/expense/v1/updateExpens` | Update an expense |
-| `DELETE` | `http://localhost:8082/expense/v1/deleteExpense` | Delete an expense |
+| `DELETE` | `http://localhost:8082/expense/v1/deleteExpense?external_id=...` | Delete an expense; requires the `X-User-Id` header |
 | `POST` | `http://localhost:3000/ds/v1/message` | Extract amount, merchant, and currency from a bank message |
 
 Example Data Service request:

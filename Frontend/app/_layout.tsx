@@ -34,10 +34,10 @@ function RootNavigator() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
-        <Stack.Protected guard={!isAuthenticated}>
+        <Stack.Protected guard={isAuthenticated}>
           <Stack.Screen name="index" options={{ headerShown: false }} />
         </Stack.Protected>
-        <Stack.Protected guard={isAuthenticated}>
+        <Stack.Protected guard={!isAuthenticated}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="expense-form" options={{ headerShown: false, presentation: 'modal' }} />
         </Stack.Protected>

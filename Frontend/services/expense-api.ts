@@ -18,10 +18,6 @@ export type UpdateExpenseInput = ExpenseInput & {
   external_id: string;
 };
 
-export type DeleteExpenseInput = {
-  external_id: string;
-}
-
 export async function getExpenses(): Promise<Expense[]> {
   const response = await apiRequest('/expense/v1/getExpense');
   if (!response.ok) throw new Error('Unable to load expenses.');
@@ -44,10 +40,10 @@ export async function updateExpense(expense: UpdateExpenseInput) {
   if (!response.ok) throw new Error('Unable to update expense.');
 }
 
-export async function deleteExpense(expense: DeleteExpenseInput){
-  const response = await apiRequest("/expense/v1/deleteExpense", {
+export async function deleteExpense(externalId: string){
+  const query = new URLSearchParams({ external_id: externalId });
+  const response = await apiRequest(`/expense/v1/deleteExpense?${query}`, {
     method: 'DELETE',
-    body: JSON.stringify(expense),
   });
   if(!response.ok) throw new Error('Unable to delete expense');
 }

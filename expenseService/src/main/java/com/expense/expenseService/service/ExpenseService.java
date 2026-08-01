@@ -55,12 +55,15 @@ public class ExpenseService
         return true;
     }
 
-    public boolean deleteExpense(ExpenseDto expenseDto){
-        Optional<Expense> expenseFountOpt = expenseRepository.findByUserIdAndExternalId(expenseDto.getUserId(), expenseDto.getExternalId());
-        if(expenseFountOpt.isEmpty()){
+    public boolean deleteExpense(String userId, String externalId){
+        if (Strings.isBlank(userId) || Strings.isBlank(externalId)) {
             return false;
         }
-        expenseRepository.delete(expenseFountOpt.get());
+        Optional<Expense> expenseFoundOpt = expenseRepository.findByUserIdAndExternalId(userId, externalId);
+        if(expenseFoundOpt.isEmpty()){
+            return false;
+        }
+        expenseRepository.delete(expenseFoundOpt.get());
         return true;
     }
 
