@@ -1,5 +1,5 @@
+import type { CreateExpenseRequest, Expense } from "../app/types/ExpenseTypes";
 import { deleteRequest, getRequest, postRequest } from "./fetchHelper";
-import type { CreateExpenseRequest, Expense } from "../types/ExpenseTypes";
 
 const expenseApiUrlPath = "/expense/v1";
 
@@ -8,9 +8,7 @@ export const fetchExpense = async (): Promise<Expense[]> => {
   return response;
 };
 
-export const addExpense = (
-  expense: CreateExpenseRequest,
-): Promise<boolean> => {
+export const addExpense = (expense: CreateExpenseRequest): Promise<boolean> => {
   return postRequest<boolean, CreateExpenseRequest>(
     `${expenseApiUrlPath}/addExpense`,
     expense,

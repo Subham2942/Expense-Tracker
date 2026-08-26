@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { addExpense } from "../services/useExpense";
+import { addExpense } from "../../services/useExpense";
 
 type AddExpenseProps = {
   onExpenseAdded?: () => void | Promise<void>;

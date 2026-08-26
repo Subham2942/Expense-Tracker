@@ -2,7 +2,6 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import React, {useState} from "react";
-import Home from "./Home";
 import Login from "./Auth/Login";
 
 export default function HomeScreen() {

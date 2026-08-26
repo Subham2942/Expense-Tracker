@@ -2,47 +2,31 @@ import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import Toast from "react-native-toast-message";
-import {
-  LoginUser,
-  getCurrentUserId,
-  refreshToken,
-} from "../../services/authService";
+import { useAuth } from "../../../context/AuthContext";
 
 export default function Login() {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+
+  const { login, isLoading, isAuthenticated } = useAuth();
 
   const goToSignup = () => {
     router.replace("/Auth/Signup");
   };
 
   useEffect(() => {
-    const handleLogin = async () => {
-      const user = await getCurrentUserId();
-
-      if (user) {
-        router.replace("/Home");
-      } else {
-        const refresh = await refreshToken();
-        if (refresh) router.replace("/Home");
-      }
-    };
-
-    handleLogin();
-
-    return () => {
-      // Cleanup if needed
-    };
-  }, []);
+    if (!isLoading && isAuthenticated) {
+      router.replace("/Home");
+    }
+  }, [isLoading, isAuthenticated]);
 
   const handleManualLogin = async () => {
-    const success = await LoginUser(userName, password);
+    const success = await login(userName, password);
     if (success) {
       Toast.show({
         type: "success",
         text1: "Login successful!",
       });
-      router.replace("/Home");
     } else {
       console.log("Login failed. Please check your credentials.");
       Toast.show({

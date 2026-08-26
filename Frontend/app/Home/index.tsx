@@ -1,25 +1,43 @@
+import { Redirect, router } from "expo-router";
 import React, { useState } from "react";
 import { Pressable, Text, View } from "react-native";
-import { logoutUser } from "../services/authService";
-import AddExpense from "./AddExpense";
-import ExpenseList from "./ExpenseList";
-import {router} from "expo-router";
+import AddExpense from "../../components/expenses/AddExpense";
+import ExpenseList from "../../components/expenses/ExpenseList";
+import { useAuth } from "../../context/AuthContext";
+import Toast from "react-native-toast-message";
 
 export default function Home() {
-  const [expenseListVersion, setExpenseListVersion] = useState(0);
+  const {logout, isAuthenticated, isLoading} = useAuth();
+  const [expenseListVersion, setExpenseListVersion] = useState<number>(0);
 
-  const handleLogout = () =>{
-    try{
-      logoutUser();
+  const handleLogout = async () : Promise<void> => {
+    try {
+      await logout();
       router.replace("/Auth/Login");
-    }catch(e){
+    } catch (e) {
       console.error(e);
     }
+  };
 
+  if(isLoading)
+  {
+    return <View>... Loading</View>
+  }
+
+  if(!isAuthenticated)
+  {
+    Toast.show({
+      type: "error",
+      text1: "Your session expired.",
+      text2: "You need to login again"
+    })
+
+    return <Redirect href="/Auth/Login"/>
   }
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Toast/>
       <ExpenseList refreshKey={expenseListVersion} />
       <AddExpense
         onExpenseAdded={() => {

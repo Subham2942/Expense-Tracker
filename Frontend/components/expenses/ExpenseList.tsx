@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
-import { deleteExpense, fetchExpense } from "../services/useExpense";
-import type { Expense } from "../types/ExpenseTypes";
+import { deleteExpense, fetchExpense } from "../../services/useExpense";
+import type { Expense } from "../../app/types/ExpenseTypes";
 
 type ExpenseListProps = {
   refreshKey?: number;

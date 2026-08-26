@@ -6,7 +6,12 @@ import React, {
   useState,
 } from "react";
 
-import { getCurrentUserId, refreshToken, LoginUser } from "../app/services/authService";
+import {
+  getCurrentUserId,
+  refreshToken,
+  loginUser,
+  logoutUser
+} from "../services/authService";
 
 type AuthUser = {
   userId: string;
@@ -16,7 +21,8 @@ type AuthContextValue = {
   user: AuthUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (username: string, password: string) => Promise<boolean>
+  login: (username: string, password: string) => Promise<boolean>;
+  logout: ()=> Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -26,7 +32,6 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    
     const restoreSession = async () => {
       try {
         let userId = await getCurrentUserId();
@@ -52,24 +57,29 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   const login = async (
-  username: string,
-  password: string,
-): Promise<boolean> => {
-  const successful = await LoginUser(username, password);
+    username: string,
+    password: string,
+  ): Promise<boolean> => {
+    const successful = await loginUser(username, password);
 
-  if (!successful) {
-    return false;
+    if (!successful) {
+      return false;
+    }
+
+    const userId = await getCurrentUserId();
+
+    if (!userId) {
+      return false;
+    }
+
+    setUser({ userId });
+    return true;
+  };
+
+  const logout = async () : Promise<void> => {
+    await logoutUser();
+    setUser(null);
   }
-
-  const userId = await getCurrentUserId();
-
-  if (!userId) {
-    return false;
-  }
-
-  setUser({ userId });
-  return true;
-};
 
   return (
     <AuthContext.Provider
@@ -77,7 +87,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         user,
         isAuthenticated: user !== null,
         isLoading,
-        login
+        login,
+        logout
       }}
     >
       {children}
@@ -85,12 +96,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   );
 };
 
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
-
   if (!context) {
     throw new Error("useAuth must be used inside AuthProvider");
   }
-
   return context;
 };

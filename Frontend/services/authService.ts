@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getRequest, postRequest } from "./fetchHelper";
+import { refreshAccessToken } from "./tokenService";
 
 const authApiUrlPath = "/auth/v1";
 
@@ -12,7 +13,7 @@ type AuthTokens = {
   refreshToken: string;
 };
 
-const LoginUser = async (username: string, password: string) => {
+const loginUser = async (username: string, password: string) => {
   console.log("Logging in with:", username, password);
 
   try {
@@ -53,28 +54,7 @@ const getCurrentUserId = async () => {
   }
 };
 
-const refreshToken = async () => {
-  console.log("Refreshing token...");
-  const refreshToken = await AsyncStorage.getItem("refreshToken");
-
-  if (!refreshToken) return false;
-
-  try {
-    const data = await postRequest<AuthTokens, { token: string }>(
-      `${authApiUrlPath}/refreshToken`,
-      { token: refreshToken },
-      requestHeaders,
-      false,
-    );
-
-    await AsyncStorage.setItem("accessToken", data.accessToken);
-    await AsyncStorage.setItem("refreshToken", data.refreshToken);
-    return true;
-  } catch (error) {
-    console.error("Failed to refresh token", error);
-    return false;
-  }
-};
+const refreshToken = refreshAccessToken;
 
 const signUp = async (
   first_name: string,
@@ -127,7 +107,7 @@ const logoutUser = async () => {
 };
 
 export {
-  LoginUser,
+  loginUser,
   getCurrentUserId,
   refreshToken,
   signUp,

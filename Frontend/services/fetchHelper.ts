@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { refreshAccessToken } from "./tokenService";
 
 type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -24,11 +25,34 @@ const apiRequest = async <TResponse, TBody = undefined>(
     headers.set("Content-Type", "application/json");
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
+  let response = await fetch(`${API_URL}${path}`, {
     method,
     headers,
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
   });
+
+  if (response.status === 401 && sendToken) {
+  const refreshed = await refreshAccessToken();
+
+  if (refreshed) {
+    const newAccessToken =
+      await AsyncStorage.getItem("accessToken");
+
+    headers.set(
+      "Authorization",
+      `Bearer ${newAccessToken}`,
+    );
+
+    response = await fetch(`${API_URL}${path}`, {
+      method,
+      headers,
+      body:
+        options.body === undefined
+          ? undefined
+          : JSON.stringify(options.body),
+    });
+  }
+}
 
   if (!response.ok) {
     const message = await response.text();

@@ -1,8 +1,8 @@
+import { router } from "expo-router";
 import React, { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
-import { signUp } from "../../services/authService";
 import Toast from "react-native-toast-message";
-import {router} from "expo-router"
+import { signUp } from "../../../services/authService";
 
 export default function Signup() {
   const [userName, setUserName] = useState("");
@@ -37,21 +37,21 @@ export default function Signup() {
       Toast.show({
         type: "success",
         text1: "Sign up successful",
-        text2: "Logging in"
-      })
+        text2: "Logging in",
+      });
       router.replace("/Home");
     } else {
       Toast.show({
         type: "error",
         text1: "Signup failed.",
-        text2: "Please try again after some time."
-      })
+        text2: "Please try again after some time.",
+      });
     }
   };
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Toast/>
+      <Toast />
       <Text>SIGNUP PAGE</Text>
 
       <TextInput
