@@ -25,6 +25,7 @@ import java.sql.Timestamp;
 public class ExpenseDto
 {
 
+    @JsonProperty(value = "external_id")
     private String externalId;
 
     @JsonProperty(value = "amount")

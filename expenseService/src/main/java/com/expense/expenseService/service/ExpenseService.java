@@ -3,8 +3,6 @@ package com.expense.expenseService.service;
 import com.expense.expenseService.dto.ExpenseDto;
 import com.expense.expenseService.entities.Expense;
 import com.expense.expenseService.repository.ExpenseRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,8 +17,6 @@ public class ExpenseService
 
     private final ExpenseRepository expenseRepository;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     @Autowired
     ExpenseService(ExpenseRepository expenseRepository){
         this.expenseRepository = expenseRepository;
@@ -28,11 +24,11 @@ public class ExpenseService
 
     public boolean createExpense(ExpenseDto expenseDto){
         setCurrency(expenseDto);
-        if (expenseDto.getAmount() == null || expenseDto.getAmount().signum() <= 0) {
+        if (expenseDto.getAmount().signum() <= 0) {
             return false;
         }
         try{
-            expenseRepository.save(objectMapper.convertValue(expenseDto, Expense.class));
+            expenseRepository.save(toEntity(expenseDto));
             return true;
         }catch(Exception ex){
             return false;
@@ -40,7 +36,7 @@ public class ExpenseService
     }
 
     public boolean updateExpense(ExpenseDto expenseDto){
-        if (expenseDto.getExternalId() == null || expenseDto.getAmount() == null || expenseDto.getAmount().signum() <= 0) {
+        if (expenseDto.getExternalId() == null || expenseDto.getAmount().signum() <= 0) {
             return false;
         }
         Optional<Expense> expenseFoundOpt = expenseRepository.findByUserIdAndExternalId(expenseDto.getUserId(), expenseDto.getExternalId());
@@ -68,14 +64,38 @@ public class ExpenseService
     }
 
     public List<ExpenseDto> getExpenses(String userId){
-        List<Expense> expenseOpt = expenseRepository.findByUserIdOrderByCreatedAtDesc(userId);
-        return objectMapper.convertValue(expenseOpt, new TypeReference<List<ExpenseDto>>() {});
+        return expenseRepository.findByUserIdOrderByCreatedAtDesc(userId)
+                .stream()
+                .map(this::toDto)
+                .toList();
     }
 
     private void setCurrency(ExpenseDto expenseDto){
         if(Objects.isNull(expenseDto.getCurrency()) || expenseDto.getCurrency().isBlank()){
             expenseDto.setCurrency("INR");
         }
+    }
+
+    private Expense toEntity(ExpenseDto expenseDto){
+        Expense expense = new Expense();
+        expense.setExternalId(expenseDto.getExternalId());
+        expense.setAmount(expenseDto.getAmount());
+        expense.setUserId(expenseDto.getUserId());
+        expense.setMerchant(expenseDto.getMerchant());
+        expense.setCurrency(expenseDto.getCurrency());
+        expense.setCreatedAt(expenseDto.getCreatedAt());
+        return expense;
+    }
+
+    private ExpenseDto toDto(Expense expense){
+        return ExpenseDto.builder()
+                .externalId(expense.getExternalId())
+                .amount(expense.getAmount())
+                .userId(expense.getUserId())
+                .merchant(expense.getMerchant())
+                .currency(expense.getCurrency())
+                .createdAt(expense.getCreatedAt())
+                .build();
     }
 
 
