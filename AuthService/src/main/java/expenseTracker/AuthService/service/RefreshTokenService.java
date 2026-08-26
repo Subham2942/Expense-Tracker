@@ -22,11 +22,12 @@ public class RefreshTokenService {
 
     public RefreshToken createRefreshToken(String username){
         UserInfo extractedUserInfo = userRepository.findByUsername(username);
-        RefreshToken refreshToken = RefreshToken.builder()
-                .userInfo(extractedUserInfo)
-                .token(UUID.randomUUID().toString())
-                .expiryDate(Instant.now().plusMillis(600000))
-                .build();
+        RefreshToken refreshToken = refreshTokenRepository
+                .findByUserInfo(extractedUserInfo)
+                .orElseGet(RefreshToken::new);
+        refreshToken.setUserInfo(extractedUserInfo);
+        refreshToken.setToken(UUID.randomUUID().toString());
+        refreshToken.setExpiryDate(Instant.now().plusMillis(600000));
         return refreshTokenRepository.save(refreshToken);
     }
 

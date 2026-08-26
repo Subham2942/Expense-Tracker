@@ -3,6 +3,8 @@ package expenseTracker.AuthService.models;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import expenseTracker.AuthService.entities.UserInfo;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Data
@@ -13,11 +15,12 @@ import lombok.*;
 @Builder
 public class UserInfoDto extends UserInfo {
 
-    @NonNull
+    @NotBlank(message = "firstName is required")
     private String firstName; //first_name
-    @NonNull
+    @NotBlank(message = "lastName is required")
     private String lastName; //last_name
-    @NonNull
+    @NotBlank(message = "email is required")
+    @Email
     private String email; //email
     private Long phoneNumber; //phone_number
 }

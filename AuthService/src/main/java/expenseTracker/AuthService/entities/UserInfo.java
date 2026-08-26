@@ -4,6 +4,9 @@ package expenseTracker.AuthService.entities;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,7 +27,10 @@ public class UserInfo {
     @Column(name="user_id")
     private String userId;
 
+    @NotBlank(message = "username is required")
     private String username;
+
+    @NotBlank(message = "Password is required")
     private String password;
 
     @ManyToMany(fetch=FetchType.EAGER)

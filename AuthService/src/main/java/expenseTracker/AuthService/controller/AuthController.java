@@ -8,6 +8,7 @@ import expenseTracker.AuthService.response.JWTResponseDTO;
 import expenseTracker.AuthService.service.JwtService;
 import expenseTracker.AuthService.service.RefreshTokenService;
 import expenseTracker.AuthService.service.UserDetailsServiceImpl;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class AuthController
     private final UserInfoProducer userInfoProducer;
 
     @PostMapping("auth/v1/signup")
-    public ResponseEntity SignUp(@RequestBody UserInfoDto userInfoDto){
+    public ResponseEntity SignUp(@Valid @RequestBody UserInfoDto userInfoDto){
         try{
             Boolean isSignedUp = userDetailsService.signupUser(userInfoDto);
             if(Boolean.FALSE.equals(isSignedUp)){
