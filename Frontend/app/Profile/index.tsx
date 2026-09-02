@@ -1,13 +1,18 @@
-import { View, Text } from 'react-native'
+import { View, Text, Pressable } from 'react-native'
 import React from 'react'
 import AccountInfo from '../../components/profile/AccountInfo'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { router } from 'expo-router'
 
 const Profile = () => {
   return (
-    <View>
+    <SafeAreaView style={{height: '100%', display: "flex", justifyContent: 'center', alignItems: 'center'}}>
       <Text>Profile</Text>
       <AccountInfo/>
-    </View>
+      <Pressable onPress={()=> router.back()} >
+        <Text> Go Back</Text>
+      </Pressable>
+    </SafeAreaView>
   )
 }
 

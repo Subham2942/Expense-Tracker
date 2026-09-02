@@ -2,7 +2,7 @@ package com.expenseTracker.userService.Deserializer;
 
 import com.expenseTracker.userService.Entities.UserInfoDto;
 import org.apache.kafka.common.serialization.Deserializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import java.nio.charset.StandardCharsets;
 

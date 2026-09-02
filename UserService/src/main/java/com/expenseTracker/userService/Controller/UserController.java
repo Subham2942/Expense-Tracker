@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping("user/v1/getUser")
-    public ResponseEntity<UserInfoDto> getUser(@RequestParam String userId) {
+    public ResponseEntity<UserInfoDto> getUser(@RequestHeader("X-User-Id") String userId) {
         try {
             UserInfoDto request = new UserInfoDto();
             request.setUserId(userId);

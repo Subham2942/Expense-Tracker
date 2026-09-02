@@ -7,10 +7,10 @@ import { useAuth } from "../../context/AuthContext";
 import Toast from "react-native-toast-message";
 
 export default function Home() {
-  const {logout, isAuthenticated, isLoading} = useAuth();
+  const { logout, isAuthenticated, isLoading } = useAuth();
   const [expenseListVersion, setExpenseListVersion] = useState<number>(0);
 
-  const handleLogout = async () : Promise<void> => {
+  const handleLogout = async (): Promise<void> => {
     try {
       await logout();
       router.replace("/Auth/Login");
@@ -19,31 +19,37 @@ export default function Home() {
     }
   };
 
-  if(isLoading)
-  {
-    return <View>... Loading</View>
+  const goToProfile = () => {
+    router.push("/Profile");
   }
 
-  if(!isAuthenticated)
-  {
-    Toast.show({
-      type: "error",
-      text1: "Your session expired.",
-      text2: "You need to login again"
-    })
+  if (isLoading) {
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
-    return <Redirect href="/Auth/Login"/>
+  if (!isAuthenticated) {
+    return <Redirect href="/Auth/Login" />;
   }
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Toast/>
+      <Toast />
       <ExpenseList refreshKey={expenseListVersion} />
       <AddExpense
         onExpenseAdded={() => {
           setExpenseListVersion((version) => version + 1);
         }}
       />
+      <Pressable
+        style={{ backgroundColor: "grey", padding: 10, margin: 10 }}
+        onPress={goToProfile}
+      >
+        <Text style={{ color: "white" }}>Profile</Text>
+      </Pressable>
       <Pressable
         style={{ backgroundColor: "grey", padding: 10, margin: 10 }}
         onPress={handleLogout}

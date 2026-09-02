@@ -1,4 +1,7 @@
-import type { CreateExpenseRequest, Expense } from "../app/types/ExpenseTypes";
+import type {
+    CreateExpenseRequest,
+    Expense,
+} from "../constants/types/ExpenseTypes";
 import { deleteRequest, getRequest, postRequest } from "./fetchHelper";
 
 const expenseApiUrlPath = "/expense/v1";

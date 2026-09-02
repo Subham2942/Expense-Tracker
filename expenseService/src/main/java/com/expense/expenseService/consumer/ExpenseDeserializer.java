@@ -1,7 +1,7 @@
 package com.expense.expenseService.consumer;
 
 import com.expense.expenseService.dto.ExpenseDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.Deserializer;
 
 import java.util.Map;

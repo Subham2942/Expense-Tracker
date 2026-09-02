@@ -6,45 +6,44 @@ import React, {
   useState,
 } from "react";
 
+import { getCurrentUser } from "../services/userService";
+
 import {
   getCurrentUserId,
-  refreshToken,
   loginUser,
-  logoutUser
+  logoutUser,
+  signUp as signUpUser,
 } from "../services/authService";
+import { UserDetails } from "../constants/types/UserType";
 
-type AuthUser = {
-  userId: string;
-};
 
 type AuthContextValue = {
-  user: AuthUser | null;
+  user: UserDetails | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (username: string, password: string) => Promise<boolean>;
-  logout: ()=> Promise<void>;
+  logout: () => Promise<void>;
+  signup: (
+    firstName: string,
+    lastName: string,
+    username: string,
+    password: string,
+    email: string,
+    phoneNumber: number,
+  ) => Promise<boolean>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<UserDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const restoreSession = async () => {
       try {
-        let userId = await getCurrentUserId();
-
-        if (!userId) {
-          const refreshed = await refreshToken();
-
-          if (refreshed) {
-            userId = await getCurrentUserId();
-          }
-        }
-
-        setUser(userId ? { userId } : null);
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
       } catch (error) {
         console.error("Failed to restore session", error);
         setUser(null);
@@ -66,20 +65,62 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       return false;
     }
 
-    const userId = await getCurrentUserId();
-
-    if (!userId) {
+    try {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+    } catch (e) {
+      console.error("Failed to load user details", e);
+      await logoutUser();
+      setUser(null);
       return false;
     }
-
-    setUser({ userId });
     return true;
   };
 
-  const logout = async () : Promise<void> => {
+  const logout = async (): Promise<void> => {
     await logoutUser();
     setUser(null);
-  }
+  };
+
+  const signup = async (
+    firstName: string,
+    lastName: string,
+    username: string,
+    password: string,
+    email: string,
+    phoneNumber: number,
+  ): Promise<boolean> => {
+    const successful = await signUpUser(
+      firstName,
+      lastName,
+      username,
+      password,
+      email,
+      phoneNumber,
+    );
+
+    if (!successful) {
+      return false;
+    }
+
+    const userId = await getCurrentUserId();
+
+    if (!userId) {
+      await logoutUser();
+      return false;
+    }
+
+    setUser({
+      user_id: userId,
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      phone_number: phoneNumber,
+      profile_picture: null,
+    });
+
+    return true;
+  };
 
   return (
     <AuthContext.Provider
@@ -88,14 +129,14 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         isAuthenticated: user !== null,
         isLoading,
         login,
-        logout
+        logout,
+        signup,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
 };
-
 
 export const useAuth = () => {
   const context = useContext(AuthContext);

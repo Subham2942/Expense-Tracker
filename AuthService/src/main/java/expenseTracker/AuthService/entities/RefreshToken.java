@@ -1,7 +1,7 @@
 package expenseTracker.AuthService.entities;
 
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import tools.jackson.databind.annotation.JsonNaming;
+import tools.jackson.databind.PropertyNamingStrategies;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -2,9 +2,12 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import Toast from "react-native-toast-message";
-import { signUp } from "../../../services/authService";
+import { useAuth } from "../../../context/AuthContext";
 
 export default function Signup() {
+
+  const {signup} = useAuth();
+
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
@@ -25,7 +28,7 @@ export default function Signup() {
       return;
     }
 
-    const success = await signUp(
+    const success = await signup(
       firstName,
       lastName,
       userName,

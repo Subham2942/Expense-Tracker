@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { refreshAccessToken } from "./tokenService";
+import { logoutUser } from "./authService";
 
 type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -25,6 +26,8 @@ const apiRequest = async <TResponse, TBody = undefined>(
     headers.set("Content-Type", "application/json");
   }
 
+  console.log(`Hitting API: ${API_URL}${path}`);
+
   let response = await fetch(`${API_URL}${path}`, {
     method,
     headers,
@@ -32,9 +35,11 @@ const apiRequest = async <TResponse, TBody = undefined>(
   });
 
   if (response.status === 401 && sendToken) {
+    console.log("Auth failed. Trying to refresh token")
   const refreshed = await refreshAccessToken();
 
   if (refreshed) {
+    console.log(`Refreshed succesfully, trying the api ${API_URL}${path} again`);
     const newAccessToken =
       await AsyncStorage.getItem("accessToken");
 
@@ -55,7 +60,12 @@ const apiRequest = async <TResponse, TBody = undefined>(
 }
 
   if (!response.ok) {
+
+    console.log("API FAILED");
+
     const message = await response.text();
+
+    await logoutUser();
 
     throw new Error(message || `Request Failed with status ${response.status}`);
   }
